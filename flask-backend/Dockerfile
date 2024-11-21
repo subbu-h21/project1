@@ -19,6 +19,10 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 # Upgrade pip
 RUN pip install --upgrade pip
 
+# Create a virtual environment and install dependencies
+RUN python -m venv venv
+RUN . venv/bin/activate && pip install --no-cache-dir -r requirements.txt
+
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
