@@ -19,12 +19,14 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 # Upgrade pip
 RUN pip install --upgrade pip
 
-# Create a virtual environment and install dependencies
-RUN python -m venv venv
-RUN . venv/bin/activate && pip install --no-cache-dir -r requirements.txt
+# Create a virtual environment
+RUN python -m venv /venv
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies using the virtual environment's pip
+RUN /venv/bin/pip install --no-cache-dir -r requirements.txt
+
+# Set the virtual environment's `bin` directory in the PATH
+ENV PATH="/venv/bin:$PATH"
 
 # Expose port 5000 for Flask
 EXPOSE 5000
