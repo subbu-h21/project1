@@ -7,8 +7,12 @@ app = Flask(__name__)
 # Function to process the Excel files
 def process_account_statement(ac_statement_file, our_books_file):
     try:
+         # Determine file formats and set engine
+        ac_statement_engine = 'openpyxl' if ac_statement_file.filename.endswith('.xlsx') else 'xlrd'
+        our_books_engine = 'openpyxl' if our_books_file.filename.endswith('.xlsx') else 'xlrd'
+
         # Load account statement file
-        ac_statement = pd.read_excel(ac_statement_file, header=None).dropna(axis=1, how='all')
+        ac_statement = pd.read_excel(ac_statement_file, header=None, engine=ac_statement_engine).dropna(axis=1, how='all')
         ac_statement.columns = ['Date', 'Particular', 'Given', 'Received', 'Balance']
 
         # Load our books file
