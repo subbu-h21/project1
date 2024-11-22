@@ -15,8 +15,9 @@ def process_account_statement(ac_statement_file, our_books_file):
         ac_statement = pd.read_excel(ac_statement_file, header=None, engine=ac_statement_engine).dropna(axis=1, how='all')
         ac_statement.columns = ['Date', 'Particular', 'Given', 'Received', 'Balance']
 
+    
         # Load our books file
-        our_books = pd.read_excel(our_books_file).dropna(axis=1, how='all')
+        our_books = pd.read_excel(our_books_file, engine=our_books_engine).dropna(axis=1, how='all')
         our_books = our_books.drop(our_books.index[0]).reset_index(drop=True)
 
         # Extract relevant payment records
