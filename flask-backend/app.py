@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, send_file
 import pandas as pd
 import re
+import os
 
 app = Flask(__name__)
 
@@ -86,4 +87,5 @@ def process_files():
     return send_file(output_file, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000,debug=True)
+    app.run(host='0.0.0.0', port=int(os.getenv("PORT", 5000)))
+
