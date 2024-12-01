@@ -13,8 +13,17 @@ def process_account_statement(ac_statement_file, our_books_file):
         our_books_engine = 'openpyxl' if our_books_file.filename.endswith('.xlsx') else 'xlrd'
 
         # Load account statement file
-        ac_statement = pd.read_excel(ac_statement_file, header=None, engine=ac_statement_engine).dropna(axis=1, how='all')
+        # Load the Excel file and drop the first 15 rows and columns with all NaN values
+        ac_statement = (
+            pd.read_excel(ac_statement_file, header=None, engine=ac_statement_engine)
+            .drop(index=range(15))  # Drop the first 15 rows
+            .dropna(axis=1, how='all')  # Drop columns where all values are NaN
+            .reset_index(drop=True)  # Reset the index
+        )
+
+        # Rename columns for better readability
         ac_statement.columns = ['Date', 'Particular', 'Given', 'Received', 'Balance']
+
 
     
         # Load our books file
