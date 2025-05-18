@@ -26,7 +26,7 @@ def process_account_statement(ac_statement_file, our_books_file):
         our_books = (
             pd.read_excel(our_books_file, engine=our_books_engine)
             .dropna(axis=1, how='all')
-            .drop(index=[0,1])  # Drop the first row
+            .drop(index=[0,1])  # Drop the first two rows
             .reset_index(drop=True)
         )
 
