@@ -50,9 +50,9 @@ def process_account_statement(ac_statement_file, our_books_file):
     ob = (
         pd.read_excel(books_path, header=None, engine=books_engine)
           .dropna(axis=1, how='all')
-          .drop(index=1)
           .pipe(lambda df: df.rename(columns=df.iloc[0]))
           .drop(index=0)
+          .pipe(lambda df: df[~df['Particular'].str.contains('Opening balance|Closing balance', case=False, na=False)])
           .reset_index(drop=True)
     )
 
