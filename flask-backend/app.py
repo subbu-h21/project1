@@ -3,6 +3,7 @@ import pandas as pd
 import re
 import os
 import time
+import datetime
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
 from werkzeug.utils import secure_filename
@@ -76,6 +77,10 @@ def process_account_statement(ac_statement_file, our_books_file):
     pay_ac['Date'] = pd.to_datetime(pay_ac['Date'], errors='coerce', dayfirst=True).dt.date
     pay_ob['Date'] = pd.to_datetime(pay_ob['Date'], errors='coerce', dayfirst=True).dt.date
 
+    #optional addition (requires importing datetime)
+    pay_ac['Date'] = pay_ac['Date'].dt.date
+    pay_ob['Date'] = pay_ob['Date'].dt.date
+
     # 7. Build datewise discrepancy list
     all_discs = []
     dates = sorted(
@@ -88,8 +93,8 @@ def process_account_statement(ac_statement_file, our_books_file):
         b = pay_ob[pay_ob['Date']==d]
         names_ac   = set(a['SupplierName'].unique())
         names_ob   = set(b['Particular'].unique())
-        only_ob    = list(names_ob - names_ac)
-        only_ac    = list(names_ac - names_ob)
+        only_ob    = list(names_ob)
+        only_ac    = list(names_ac)
         L = max(len(only_ob), len(only_ac))
         only_ob += [None]*(L-len(only_ob))
         only_ac += [None]*(L-len(only_ac))
