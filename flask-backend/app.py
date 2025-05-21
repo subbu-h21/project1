@@ -77,9 +77,9 @@ def process_account_statement(ac_statement_file, our_books_file):
     pay_ac['Date'] = pd.to_datetime(pay_ac['Date'], errors='coerce', dayfirst=True).dt.date
     pay_ob['Date'] = pd.to_datetime(pay_ob['Date'], errors='coerce', dayfirst=True).dt.date
 
-    #optional addition (requires importing datetime)
-    pay_ac['Date'] = pay_ac['Date'].dt.date
-    pay_ob['Date'] = pay_ob['Date'].dt.date
+    # #optional addition (requires importing datetime)
+    # pay_ac['Date'] = pay_ac['Date'].dt.date
+    # pay_ob['Date'] = pay_ob['Date'].dt.date
 
     # 7. Build datewise discrepancy list
     all_discs = []
