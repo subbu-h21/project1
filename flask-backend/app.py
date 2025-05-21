@@ -79,7 +79,7 @@ def process_account_statement(ac_statement_file, our_books_file):
     # 7. Build datewise discrepancy list
     all_discs = []
     dates = sorted(
-        set(pay_ac['Date'].dropna().unique()) |
+        set(pay_ac['Date'].dropna().unique()) &
         set(pay_ob['Date'].dropna().unique())
     )
 
