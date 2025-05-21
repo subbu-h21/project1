@@ -1,0 +1,33 @@
+# Ignore virtual environment folder
+venv/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore environment config files (if you use one)
+.env
+
+# Ignore IDE/editor specific files
+.vscode/
+.idea/
+
+# Ignore OS system files
+.DS_Store
+Thumbs.db
+
+# Ignore uploads folder (if you don't want to track uploaded files)
+uploads/
+
+# Ignore Excel files (if they are logs or runtime generated)
+*.xlsx
+*.xls
+
+# Ignore Docker system files (optional)
+*.log
+
+# Ignore temporary files
+*.bak
+*.swp
+*.swo
