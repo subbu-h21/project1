@@ -97,7 +97,7 @@ def process_payments(ac_path, books_path, timestamp):
     for d in sorted(set(pay_ac['Date'].dropna()) & set(pay_ob['Date'].dropna())):
         a=pay_ac[pay_ac['Date']==d]; b=pay_ob[pay_ob['Date']==d]
         n_ac=set(a['SupplierName']); n_ob=set(b['Particular'])
-        only_ob=list(n_ob-n_ac); only_ac=list(n_ac-n_ob)
+        only_ob=list(n_ob); only_ac=list(n_ac)
         L=max(len(only_ob),len(only_ac)); only_ob+=[None]*(L-len(only_ob)); only_ac+=[None]*(L-len(only_ac))
         for obn,acn in zip(only_ob,only_ac): discs.append({'Date':d,'Not in account statement':obn,'Not in our books':acn})
     df=pd.DataFrame(discs).sort_values('Date').reset_index(drop=True)
