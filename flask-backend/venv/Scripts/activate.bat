@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\subra\flask-backend\venv
+set VIRTUAL_ENV=D:\account_balance_files_pushed from_ git\project1\flask-backend\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

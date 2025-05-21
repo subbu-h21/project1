@@ -7,7 +7,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
 from werkzeug.utils import secure_filename
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 # where we’ll store uploads and outputs
 UPLOAD_FOLDER = 'uploads'
@@ -55,7 +55,7 @@ def process_receivements(ac_path, books_path, timestamp):
         names_ac = set(a['SupplierName']); names_ob = set(b['Particular'])
         only_ob = list(names_ob - names_ac); only_ac = list(names_ac - names_ob)
         L = max(len(only_ob), len(only_ac))
-        only_ob += [None](L-len(only_ob)); only_ac += [None](L-len(only_ac))
+        only_ob += [None]*(L-len(only_ob)); only_ac += [None]*(L-len(only_ac))
         for obn, acn in zip(only_ob, only_ac): discs.append({'Date':d,'Not in account statement':obn,'Not in our books':acn})
     df = pd.DataFrame(discs).sort_values('Date').reset_index(drop=True)
     # sums
@@ -98,7 +98,7 @@ def process_payments(ac_path, books_path, timestamp):
         a=pay_ac[pay_ac['Date']==d]; b=pay_ob[pay_ob['Date']==d]
         n_ac=set(a['SupplierName']); n_ob=set(b['Particular'])
         only_ob=list(n_ob-n_ac); only_ac=list(n_ac-n_ob)
-        L=max(len(only_ob),len(only_ac)); only_ob+=[None](L-len(only_ob)); only_ac+=[None](L-len(only_ac))
+        L=max(len(only_ob),len(only_ac)); only_ob+=[None]*(L-len(only_ob)); only_ac+=[None]*(L-len(only_ac))
         for obn,acn in zip(only_ob,only_ac): discs.append({'Date':d,'Not in account statement':obn,'Not in our books':acn})
     df=pd.DataFrame(discs).sort_values('Date').reset_index(drop=True)
     pay_ac['Given']=pay_ac['Given'].replace({'\\$':'','\\,':'','\\s+':''}, regex=True).pipe(pd.to_numeric, errors='coerce')
@@ -143,5 +143,5 @@ def process_files():
     os.remove(ac_path); os.remove(ob_path)
     return send_file(out, as_attachment=True)
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.getenv('PORT',5000)))

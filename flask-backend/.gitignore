@@ -24,9 +24,6 @@ uploads/
 *.xlsx
 *.xls
 
-# Ignore Docker system files (optional)
-*.log
-
 # Ignore temporary files
 *.bak
 *.swp
