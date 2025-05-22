@@ -115,8 +115,79 @@ def process_payments(ac_path, books_path, timestamp):
     final=final[['Date','Not in account statement','Credit','','Not in our books','Given']]
     return final
 
+def process_summary(ac_path, books_path):
+    # Determine engines
+    ac_eng = 'openpyxl' if ac_path.endswith('.xlsx') else 'xlrd'
+    ob_eng = 'openpyxl' if books_path.endswith('.xlsx') else 'xlrd'
+
+    # Load and normalize account statement
+    ac = (pd.read_excel(ac_path, header=None, engine=ac_eng)
+            .drop(index=range(14))
+            .dropna(axis=1, how='all')
+            .reset_index(drop=True))
+    ac.columns = ac.iloc[0]
+    ac = ac[1:].reset_index(drop=True).drop('Cheque No', axis=1)
+    ac.columns = ['Date','Particular','Given','Received','Balance']
+    ac['Date'] = pd.to_datetime(ac['Date'], errors='coerce', dayfirst=True)
+
+    # Load and normalize our books
+    ob = (pd.read_excel(books_path, header=None, engine=ob_eng)
+            .dropna(axis=1, how='all')
+            .pipe(lambda df: df.rename(columns=df.iloc[0])).drop(index=0)
+            .pipe(lambda df: df[~df['Particular'].str.contains('Opening balance|Closing balance', case=False, na=False)])
+            .reset_index(drop=True))
+    ob['Date'] = pd.to_datetime(ob['Date'], errors='coerce', dayfirst=True)
+
+    # Clean numeric columns
+    ac[['Given','Received']] = (ac[['Given','Received']]
+        .replace({'\$':'','\,':'','\s+':''}, regex=True)
+        .replace([None,'0'], np.nan)
+        .apply(pd.to_numeric, errors='coerce'))
+    ob[['Credit','Debit']] = (ob[['Credit','Debit']]
+        .replace({'\$':'','\,':'','\s+':''}, regex=True)
+        .replace([None,0], np.nan)
+        .apply(pd.to_numeric, errors='coerce'))
+
+    # Gather all unique dates
+    all_dates = sorted(set(ac['Date'].dropna().dt.date.unique()) |
+                       set(ob['Date'].dropna().dt.date.unique()))
+
+    rows = []
+    for d in all_dates:
+        ac_d = ac[ac['Date'].dt.date == d]
+        ob_d = ob[ob['Date'].dt.date == d]
+
+        rows.append(((d, 'total count'), {
+            'account': len(ac_d),
+            'our_book': len(ob_d),
+        }))
+        rows.append(((d, 'debit/received entries'), {
+            'account': ac_d['Received'].count(),
+            'our_book': ob_d['Debit'].count(),
+        }))
+        rows.append(((d, 'credit/given entries'), {
+            'account': ac_d['Given'].count(),
+            'our_book': ob_d['Credit'].count(),
+        }))
+        rows.append(((d, 'debit/received total'), {
+            'account': ac_d['Received'].sum(),
+            'our_book': ob_d['Debit'].sum(),
+        }))
+        rows.append(((d, 'credit/given total'), {
+            'account': ac_d['Given'].sum(),
+            'our_book': ob_d['Credit'].sum(),
+        }))
+
+    # Build summary DataFrame
+    idx = pd.MultiIndex.from_tuples([r[0] for r in rows], names=['Date','Metric'])
+    df = pd.DataFrame([r[1] for r in rows], index=idx)
+    df['Difference'] = df['account'] - df['our_book']
+    df = df.reset_index()
+    return df
+
 @app.route('/')
-def home(): return render_template('index.html')
+def home():
+    return render_template('index.html')
 
 @app.route('/process', methods=['POST'])
 def process_files():
@@ -128,9 +199,11 @@ def process_files():
     out = os.path.join(app.config['UPLOAD_FOLDER'], f"combined_{timestamp}.xlsx")
     recv_df = process_receivements(ac_path, ob_path, timestamp)
     pay_df  = process_payments(ac_path, ob_path, timestamp)
+    summary_df = process_summary(ac_path, ob_path,timestamp)
     with pd.ExcelWriter(out, engine='openpyxl') as w:
         recv_df.to_excel(w, sheet_name='Receivements', index=False)
         pay_df.to_excel(w, sheet_name='Payments', index=False)
+        summary_df.to_excel(writer, sheet_name='Summary', index=False)
     # optional styling across both sheets
     wb = load_workbook(out)
     grey = PatternFill(start_color="DDDDDD", end_color="DDDDDD", fill_type="solid")
