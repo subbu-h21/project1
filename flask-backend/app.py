@@ -183,7 +183,7 @@ def process_summary(ac_path, books_path):
     idx = pd.MultiIndex.from_tuples([r[0] for r in rows], names=['Date','Metric'])
     df = pd.DataFrame([r[1] for r in rows], index=idx)
     df['Difference'] = df['account'] - df['our_book']
-    df = df.reset_index()
+    # df = df.reset_index()
     return df
 
 @app.route('/')
