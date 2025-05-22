@@ -205,6 +205,7 @@ def process_files():
         recv_df.to_excel(w, sheet_name='Receivements', index=False)
         pay_df.to_excel(w, sheet_name='Payments', index=False)
         summary_df.to_excel(w, sheet_name='Summary', index=False)
+        summary_df.to_excel(w,sheet_name='Summary',index=True,index_label=['Date', 'Metric'])
     # optional styling across both sheets
     wb = load_workbook(out)
     grey = PatternFill(start_color="DDDDDD", end_color="DDDDDD", fill_type="solid")
