@@ -199,7 +199,7 @@ def process_files():
     out = os.path.join(app.config['UPLOAD_FOLDER'], f"combined_{timestamp}.xlsx")
     recv_df = process_receivements(ac_path, ob_path, timestamp)
     pay_df  = process_payments(ac_path, ob_path, timestamp)
-    summary_df = process_summary(ac_path, ob_path,timestamp)
+    summary_df = process_summary(ac_path, ob_path)
     with pd.ExcelWriter(out, engine='openpyxl') as w:
         recv_df.to_excel(w, sheet_name='Receivements', index=False)
         pay_df.to_excel(w, sheet_name='Payments', index=False)
