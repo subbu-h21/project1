@@ -149,20 +149,19 @@ def process_summary(ac_path, books_path):
         .replace([None,0], np.nan)
         .apply(pd.to_numeric, errors='coerce'))
 
-    ac_statement['Balance'] = (
-        ac_statement['Balance']
+    ac['Balance'] = (
+        ac['Balance']
         .str.replace(',', '', regex=True)
         .astype(float)
         .abs()
     )
-
-    our_books['Balance'] = (
-        our_books['Balance']
+    ob['Balance'] = (
+        ob['Balance']
         .str.replace('Cr', '', regex=False)
         .str.replace(',', '', regex=False)
         .str.replace(r'\s+', '', regex=True)
     )
-    our_books['Balance'] = pd.to_numeric(our_books['Balance'], errors='coerce').abs()
+    ob['Balance'] = pd.to_numeric(ob['Balance'], errors='coerce').abs()
     
     # Gather all unique dates
     all_dates = sorted(set(ac['Date'].dropna().dt.date.unique()) |
