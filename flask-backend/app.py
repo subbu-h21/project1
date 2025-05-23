@@ -149,6 +149,13 @@ def process_summary(ac_path, books_path):
         .replace([None,0], np.nan)
         .apply(pd.to_numeric, errors='coerce'))
 
+    ac_statement['Balance'] = (
+        ac_statement['Balance']
+        .str.replace(',', '', regex=True)
+        .astype(float)
+        .abs()
+    )
+
     # Gather all unique dates
     all_dates = sorted(set(ac['Date'].dropna().dt.date.unique()) |
                        set(ob['Date'].dropna().dt.date.unique()))
@@ -177,6 +184,10 @@ def process_summary(ac_path, books_path):
         rows.append(((d, 'credit/given total'), {
             'account': ac_d['Given'].sum(),
             'our_book': ob_d['Credit'].sum(),
+        }))
+        rows.append(((d, 'Closing Balance'), {
+            'account': ac_d['Balance'].iloc[-1] if not ac_data.empty else None,
+            'our_book': ob_d['Balance'].iloc[-1] if not book_data.empty else None,
         }))
 
     # Build summary DataFrame
