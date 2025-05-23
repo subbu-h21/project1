@@ -156,6 +156,14 @@ def process_summary(ac_path, books_path):
         .abs()
     )
 
+    our_books['Balance'] = (
+        our_books['Balance']
+        .str.replace('Cr', '', regex=False)
+        .str.replace(',', '', regex=False)
+        .str.replace(r'\s+', '', regex=True)
+    )
+    our_books['Balance'] = pd.to_numeric(our_books['Balance'], errors='coerce').abs()
+    
     # Gather all unique dates
     all_dates = sorted(set(ac['Date'].dropna().dt.date.unique()) |
                        set(ob['Date'].dropna().dt.date.unique()))
