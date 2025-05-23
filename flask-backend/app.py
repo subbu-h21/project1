@@ -51,7 +51,7 @@ def process_receivements(ac_path, books_path, timestamp):
     recv_ob['Date'] = pd.to_datetime(recv_ob['Date'], errors='coerce', dayfirst=True).dt.date
     # discrepancies list
     discs = []
-    for d in sorted(set(recv_ac['Date'].dropna()) & set(recv_ob['Date'].dropna())):
+    for d in sorted(set(recv_ac['Date'].dropna()) | set(recv_ob['Date'].dropna())):
         a = recv_ac[recv_ac['Date']==d]; b = recv_ob[recv_ob['Date']==d]
         names_ac = set(a['SupplierName']); names_ob = set(b['Particular'])
         only_ob = list(names_ob - names_ac); only_ac = list(names_ac - names_ob)
@@ -95,7 +95,7 @@ def process_payments(ac_path, books_path, timestamp):
     pay_ac['Date']=pd.to_datetime(pay_ac['Date'],errors='coerce',dayfirst=True).dt.date
     pay_ob['Date']=pd.to_datetime(pay_ob['Date'],errors='coerce',dayfirst=True).dt.date
     discs=[]
-    for d in sorted(set(pay_ac['Date'].dropna()) & set(pay_ob['Date'].dropna())):
+    for d in sorted(set(pay_ac['Date'].dropna()) | set(pay_ob['Date'].dropna())):
         a=pay_ac[pay_ac['Date']==d]; b=pay_ob[pay_ob['Date']==d]
         n_ac=set(a['SupplierName']); n_ob=set(b['Particular'])
         only_ob=list(n_ob); only_ac=list(n_ac)
