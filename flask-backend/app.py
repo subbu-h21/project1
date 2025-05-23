@@ -193,7 +193,7 @@ def process_summary(ac_path, books_path):
             'our_book': ob_d['Credit'].sum(),
         }))
         rows.append(((d, 'Closing Balance'), {
-            'account': ac_d['Balance'].iloc[-1] if not ac_d.empty else None,
+            'account': ac_d['Balance'].iloc[0] if not ac_d.empty else None,
             'our_book': ob_d['Balance'].iloc[-1] if not ob_d.empty else None,
         }))
 
