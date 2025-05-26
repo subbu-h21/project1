@@ -74,7 +74,7 @@ def process_receivements(ac_path, books_path, timestamp):
         rows.append(r.to_dict()); prev=r['Date']
     final = pd.DataFrame(rows); final[''] = None
     final = final[['Date','Not in account statement','Debit','', 'Not in our books','Received']]
-    # final = final[~final['Not in account statement'].str.contains('UPI:', na=False) & ~final['Not in our books'].str.contains('UPI:', na=False)]
+    final = final[~final['Not in account statement'].str.contains('UPI:', na=False) & ~final['Not in our books'].str.contains('UPI:', na=False)]
     return final
 
 # 2nd: payments discrepancy
